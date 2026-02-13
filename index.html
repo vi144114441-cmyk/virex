@@ -8,44 +8,111 @@
 <style>
 body{
     margin:0;
-    padding:20px;
     font-family:Arial, sans-serif;
     text-align:center;
     color:white;
-    min-height:100vh;
-    overflow-y:auto;
-
-    background:
-        linear-gradient(rgba(139,0,0,0.75), rgba(139,0,0,0.75)),
-        url("horse-bg.png") center center no-repeat fixed;
-    background-size:cover;
+    background:#8B0000;
+    overflow-x:hidden;
 }
 
-h2{
-    text-shadow:2px 2px 10px black;
+/* ===== NỀN NGỰA VÀNG ===== */
+.golden-horse{
+    position:fixed;
+    bottom:0;
+    left:50%;
+    transform:translateX(-50%);
+    width:320px;
+    opacity:0.12;
+    pointer-events:none;
+    z-index:0;
 }
 
-/* Grid 3 bao 1 dòng */
-.container{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:20px;
-    margin-top:40px;
-    padding-bottom:180px;
+/* ===== PHÁO HOA ===== */
+.firework{
+    position:fixed;
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    pointer-events:none;
+    animation:explode 1.2s ease-out forwards;
 }
 
-/* LÌ XÌ 3D */
-.lixi{
-    perspective:1000px;
+@keyframes explode{
+    0%{
+        transform:scale(0.5);
+        opacity:1;
+    }
+    100%{
+        transform:scale(3);
+        opacity:0;
+    }
+}
+
+/* ===== MÀN HÌNH CHÚC MỪNG ===== */
+.welcome-screen{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:linear-gradient(#8B0000,#a00000);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    padding:30px;
+    z-index:9999;
+}
+
+.welcome-screen h1{
+    font-size:20px;
+    line-height:1.6;
+}
+
+.welcome-screen button{
+    margin-top:30px;
+    padding:15px 30px;
+    font-size:18px;
+    border:none;
+    border-radius:15px;
+    background:gold;
+    color:#8B0000;
+    font-weight:bold;
     cursor:pointer;
 }
 
+/* ===== GIAO DIỆN CHÍNH ===== */
+.main-content{
+    display:none;
+    padding:20px;
+    position:relative;
+    z-index:1;
+}
+
+.container{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+    margin-top:30px;
+    max-width:750px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+/* ===== BAO LÌ XÌ ===== */
+.lixi{
+    display:flex;
+    justify-content:center;
+    perspective:1000px;
+}
+
 .card{
-    width:100%;
-    height:140px;
+    width:95px;
+    height:190px;
     position:relative;
     transform-style:preserve-3d;
     transition:transform 0.8s;
+    cursor:pointer;
 }
 
 .lixi.open .card{
@@ -57,92 +124,114 @@ h2{
     width:100%;
     height:100%;
     backface-visibility:hidden;
-    border-radius:15px;
+    border-radius:18px;
     display:flex;
     align-items:center;
     justify-content:center;
     font-weight:bold;
-    font-size:18px;
+    font-size:13px;
+    padding:8px;
+    text-align:center;
+    white-space:pre-line;
+    box-shadow:0 8px 20px rgba(0,0,0,0.5);
 }
 
 .front{
-    background:#c40000;
     color:#ffd700;
-    box-shadow:0 5px 15px rgba(0,0,0,0.4);
 }
 
 .back{
-    background:#fff;
+    background:white;
     color:#8B0000;
     transform:rotateY(180deg);
-    box-shadow:0 5px 15px rgba(0,0,0,0.4);
 }
 
-/* ===== BẠCH MÃ CHẠY ===== */
-@keyframes runHorse{
-    0%{transform:translateX(-300px);}
-    100%{transform:translateX(120vw);}
-}
-
-.white-horse{
+/* PASSWORD */
+.password-screen{
     position:fixed;
-    bottom:20px;
-    width:100px;
-    animation:runHorse linear infinite;
-    opacity:0.9;
-    filter:drop-shadow(0 10px 10px rgba(255,255,255,0.7));
-}
-
-.wh1{animation-duration:12s;}
-.wh2{animation-duration:18s; bottom:90px;}
-.wh3{animation-duration:25s; bottom:160px;}
-
-/* Pháo lấp lánh */
-@keyframes sparkle{
-    0%{opacity:0;}
-    50%{opacity:1;}
-    100%{opacity:0;}
-}
-
-.spark{
-    position:fixed;
-    font-size:18px;
-    animation:sparkle 2s infinite;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:#8B0000;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    z-index:9999;
 }
 </style>
 </head>
 
 <body>
 
-<h2>🐎🧧 LÌ XÌ MAY MẮN - BÍNH NGỌ 🧧🐎</h2>
+<!-- Ngựa vàng (đổi ảnh thành golden-horse.png nếu có) -->
+<img src="golden-horse.png" class="golden-horse">
 
-<div class="container" id="container"></div>
+<!-- ===== MÀN HÌNH CHÚC MỪNG ===== -->
+<div class="welcome-screen" id="welcome">
+    <h1>
+    🎉 CHÚC MỪNG NĂM MỚI 2026 🎉<br><br>
+    CHÚC BẠN NĂM MỚI CÓ ĐƯỢC NHIỀU THÀNH CÔNG<br>
+    GIA ĐÌNH HẠNH PHÚC<br>
+    SỨC KHỎE DỒI DÀO<br>
+    TÌNH CẢM TRÀN TRỀ ❤️
+    </h1>
+    <button onclick="enterApp()">Nhận Lì Xì 🧧</button>
+</div>
 
-<!-- Bạch mã chạy -->
-<img src="horse-bg.png" class="white-horse wh1">
-<img src="horse-bg.png" class="white-horse wh2">
-<img src="horse-bg.png" class="white-horse wh3">
+<!-- ===== GIAO DIỆN CHÍNH ===== -->
+<div class="main-content" id="main">
+    <h2>🧧 LÌ XÌ MAY MẮN - BÍNH NGỌ 2026 🧧</h2>
+    <div class="container" id="container"></div>
+</div>
 
 <script>
 
-/* ===== RESET ĐỂ TEST ===== */
-localStorage.removeItem("opened");
+/* ===== PHÁO HOA 7 MÀU ===== */
+const colors = ["red","orange","yellow","green","blue","indigo","violet"];
 
-/* ===== PHÁO ===== */
-for(let i=0;i<40;i++){
-    let s=document.createElement("div");
-    s.className="spark";
-    s.innerText="✨";
-    s.style.top=Math.random()*200+"vh";
-    s.style.left=Math.random()*100+"vw";
-    document.body.appendChild(s);
+function createFirework(){
+    for(let i=0;i<20;i++){
+        let fw=document.createElement("div");
+        fw.className="firework";
+        fw.style.background=colors[Math.floor(Math.random()*colors.length)];
+        fw.style.left=Math.random()*100+"vw";
+        fw.style.top=Math.random()*60+"vh";
+        document.body.appendChild(fw);
+        setTimeout(()=>fw.remove(),1200);
+    }
+}
+setInterval(createFirework,1500);
+
+/* ===== VÀO APP ===== */
+function enterApp(){
+    document.getElementById("welcome").style.display="none";
+    document.getElementById("main").style.display="block";
 }
 
-/* ===== TẠO 20 BAO ===== */
+/* ===== BAO KHÁC NHAU ===== */
+const gradients = [
+"linear-gradient(#c40000,#8b0000)",
+"linear-gradient(#d32f2f,#b71c1c)",
+"linear-gradient(#aa0000,#7f0000)",
+"linear-gradient(#c2185b,#880e4f)",
+"linear-gradient(#b71c1c,#4e0000)",
+"linear-gradient(#d84315,#bf360c)"
+];
+
+const texts = [
+"🧧 Phát Tài",
+"🧧 Lộc Xuân",
+"🧧 May Mắn",
+"🧧 Đại Cát",
+"🧧 Bình An",
+"🧧 Tấn Lộc"
+];
+
 const container=document.getElementById("container");
 
-for(let i=0;i<20;i++){
-
+for(let i=0;i<18;i++){
     let wrapper=document.createElement("div");
     wrapper.className="lixi";
 
@@ -151,7 +240,8 @@ for(let i=0;i<20;i++){
 
     let front=document.createElement("div");
     front.className="front";
-    front.innerText="🧧 Bao lì xì";
+    front.style.background=gradients[i%gradients.length];
+    front.innerText=texts[i%texts.length];
 
     let back=document.createElement("div");
     back.className="back";
@@ -161,35 +251,71 @@ for(let i=0;i<20;i++){
     wrapper.appendChild(card);
 
     wrapper.onclick=()=>openCard(wrapper,back);
-
     container.appendChild(wrapper);
 }
 
-function openCard(wrapper,back){
+/* ===== PASSWORD ===== */
+function showPasswordScreen(){
+    let overlay=document.createElement("div");
+    overlay.className="password-screen";
+    overlay.innerHTML=`
+        <h2>🔒 Nhập mật khẩu để mở lại</h2>
+        <input type="password" id="passInput" style="padding:15px;font-size:18px;border-radius:15px;">
+        <button onclick="checkPass()" style="margin-top:15px;padding:12px 25px;border-radius:15px;">Xác nhận</button>
+    `;
+    document.body.appendChild(overlay);
+
+    window.checkPass=function(){
+        let value=document.getElementById("passInput").value;
+        if(value==="KHONGCODAUSOIA"){
+            localStorage.removeItem("opened");
+            overlay.remove();
+            alert("Mật khẩu đúng! Bạn có thể mở lại.");
+        }else{
+            alert("Sai mật khẩu!");
+        }
+    }
+}
+
+/* ===== RANDOM TỈ LỆ ===== */
+function openCard(wrapper, back){
 
     if(localStorage.getItem("opened")){
-        alert("Bạn đã mở rồi!");
+        showPasswordScreen();
         return;
     }
 
-    let rewards=[
-        "💰 500.000 VNĐ",
-        "💰 200.000 VNĐ",
-        "💰 100.000 VNĐ",
-        "🔋 Sạc Dự Phòng",
-        "🎊 Phát tài phát lộc",
-        "❤️ An khang thịnh vượng"
-    ];
+    let random=Math.random()*100;
+    let rewardText="";
 
-    let reward=rewards[Math.floor(Math.random()*rewards.length)];
+    if(random<5){
+        rewardText="💰 500.000 VNĐ";
+    }
+    else if(random<15){
+        rewardText="🔋 Sạc Dự Phòng";
+    }
+    else if(random<25){
+        rewardText="💰 200.000 VNĐ";
+    }
+    else{
+        let amount=Math.floor(Math.random()*(100-5+1)+5)*1000;
+        let wishes=[
+            "🎊 Phát tài phát lộc!",
+            "🌸 Vạn sự như ý!",
+            "🎉 Tấn tài tấn lộc!",
+            "🐎 Mã đáo thành công!",
+            "❤️ An khang thịnh vượng!"
+        ];
+        let wish=wishes[Math.floor(Math.random()*wishes.length)];
+        rewardText="💰 "+amount.toLocaleString("vi-VN")+" VNĐ\n"+wish;
+    }
 
-    back.innerText=reward;
+    back.innerText=rewardText;
     wrapper.classList.add("open");
-
     localStorage.setItem("opened","true");
 
     setTimeout(()=>{
-        alert("🎉 Chúc mừng bạn nhận được: "+reward);
+        alert("🎉 Chúc mừng bạn nhận được:\n"+rewardText);
     },500);
 }
 
