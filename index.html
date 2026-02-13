@@ -14,13 +14,11 @@ body{
     text-align:center;
     color:white;
     overflow-x:hidden;
-
     background: linear-gradient(135deg, #8B0000, #ff0000, #b71c1c);
     background-size: cover;
 }
 
 /* ===== PHÁO HOA ===== */
-
 .rocket{
     position:fixed;
     width:4px;
@@ -47,7 +45,6 @@ body{
 }
 
 /* ===== WELCOME ===== */
-
 .welcome-screen{
     position:fixed;
     inset:0;
@@ -72,7 +69,6 @@ body{
 }
 
 /* ===== MAIN ===== */
-
 .main-content{
     display:none;
     padding:30px 15px;
@@ -89,7 +85,6 @@ body{
 }
 
 /* ===== LÌ XÌ 3D ===== */
-
 .lixi{
     display:flex;
     justify-content:center;
@@ -104,8 +99,6 @@ body{
     transform-style:preserve-3d;
     cursor:pointer;
 }
-
-/* Thân bao */
 
 .front{
     position:absolute;
@@ -122,8 +115,6 @@ body{
     box-shadow:0 10px 25px rgba(0,0,0,0.4);
 }
 
-/* Nắp */
-
 .flap{
     position:absolute;
     top:0;
@@ -136,8 +127,6 @@ body{
     border-top-left-radius:18px;
     border-top-right-radius:18px;
 }
-
-/* Tiền */
 
 .back{
     position:absolute;
@@ -160,16 +149,8 @@ body{
     box-shadow:0 8px 20px rgba(0,0,0,0.3);
 }
 
-.lixi.open .flap{
-    transform:rotateX(-150deg);
-}
-
-.lixi.open .back{
-    transform:translateY(-30px);
-    opacity:1;
-}
-
-/* ===== PASSWORD ===== */
+.lixi.open .flap{ transform:rotateX(-150deg); }
+.lixi.open .back{ transform:translateY(-30px); opacity:1; }
 
 .password-screen{
     position:fixed;
@@ -222,8 +203,53 @@ body{
 
 <script>
 
-/* ===== PHÁO HOA ===== */
+/* ===== LẤY NGÀY HÔM NAY ===== */
+function getToday(){
+    let now=new Date();
+    return now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,'0')+"-"+String(now.getDate()).padStart(2,'0');
+}
 
+/* ===== RESET 00:00 ===== */
+function showCountdownToMidnight(){
+
+    if(document.getElementById("countdownBox")) return;
+
+    let box=document.createElement("div");
+    box.id="countdownBox";
+    box.style.position="fixed";
+    box.style.bottom="15px";
+    box.style.left="50%";
+    box.style.transform="translateX(-50%)";
+    box.style.background="rgba(0,0,0,0.7)";
+    box.style.padding="10px 20px";
+    box.style.borderRadius="12px";
+    box.style.fontSize="14px";
+    box.style.zIndex="9999";
+    document.body.appendChild(box);
+
+    function update(){
+        let now=new Date();
+        let midnight=new Date();
+        midnight.setHours(24,0,0,0);
+        let diff=midnight-now;
+
+        if(diff<=0){
+            localStorage.removeItem("openedDate");
+            location.reload();
+        }
+
+        let h=Math.floor(diff/(1000*60*60));
+        let m=Math.floor((diff%(1000*60*60))/(1000*60));
+        let s=Math.floor((diff%(1000*60))/1000);
+
+        box.innerHTML="⏳ Reset lúc 00:00 còn: "+h+"h "+m+"m "+s+"s";
+    }
+
+    update();
+    setInterval(update,1000);
+}
+
+/* ===== PHÁO HOA + APP ===== */
 let appStarted=false;
 
 function launchRocket(x){
@@ -239,7 +265,6 @@ function launchRocket(x){
     let fly=setInterval(()=>{
         pos+=8;
         rocket.style.bottom=pos+"px";
-
         if(pos>=height){
             clearInterval(fly);
             rocket.remove();
@@ -254,13 +279,8 @@ function explodeHeart(x,y){
 
     for(let i=0;i<particles;i++){
         const t=(i/particles)*Math.PI*2;
-
         const heartX=16*Math.pow(Math.sin(t),3);
-        const heartY=
-            13*Math.cos(t)-
-            5*Math.cos(2*t)-
-            2*Math.cos(3*t)-
-            Math.cos(4*t);
+        const heartY=13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t);
 
         let fw=document.createElement("div");
         fw.className="firework";
@@ -268,61 +288,31 @@ function explodeHeart(x,y){
         fw.style.top=y+"px";
         fw.style.color=i%2===0?"gold":"#ff0044";
         fw.style.background="currentColor";
-
         fw.style.setProperty("--x",heartX*scale+"px");
         fw.style.setProperty("--y",-heartY*scale+"px");
-
         document.body.appendChild(fw);
         setTimeout(()=>fw.remove(),1200);
     }
 }
 
-setInterval(()=>{
-    if(appStarted){
-        launchRocket(Math.random()*window.innerWidth);
-    }
-},3000);
-
-document.addEventListener("click",(e)=>{
-    if(appStarted){
-        launchRocket(e.clientX);
-    }
-});
+setInterval(()=>{ if(appStarted) launchRocket(Math.random()*window.innerWidth); },3000);
+document.addEventListener("click",(e)=>{ if(appStarted) launchRocket(e.clientX); });
 
 function enterApp(){
     document.getElementById("welcome").style.display="none";
     document.getElementById("main").style.display="block";
     appStarted=true;
+
+    if(localStorage.getItem("openedDate")===getToday()){
+        showCountdownToMidnight();
+    }
 }
 
 /* ===== TẠO 25 BAO ===== */
 
-const gradients=[
-"linear-gradient(#c40000,#8b0000)",
-"linear-gradient(#d32f2f,#b71c1c)",
-"linear-gradient(#aa0000,#7f0000)",
-"linear-gradient(#c2185b,#880e4f)",
-"linear-gradient(#b71c1c,#4e0000)",
-"linear-gradient(#d84315,#bf360c)"
-];
-
-const texts=[
-"🧧 Phát Tài","🧧 Lộc Xuân","🧧 May Mắn","🧧 Đại Cát","🧧 Bình An",
-"🧧 Tấn Lộc","🎊 An Khang Thịnh Vượng","🌸 Vạn Sự Như Ý",
-"🎉 Tấn Tài Tấn Lộc","🐎 Mã Đáo Thành Công",
-"💰 Tiền Vào Như Nước","🌟 Công Danh Rạng Rỡ",
-"🎁 Phúc Lộc Đầy Nhà","🍀 Gặp Nhiều May Mắn",
-"🏮 Một Cốc Nước","✨ Thành Công Rực Rỡ",
-"❤️ Gia Đình Hạnh Phúc","🌺 Xuân Như Ý",
-"🧧 Xuân Phú Quý","🌸 Tài Lộc Dồi Dào",
-"💎 Thành Công Đại Thắng","🔥 Bứt Phá 2026",
-"🎊 Rực Rỡ Năm Mới","🏆 Thắng Lớn","✨ Lộc Phát Trọn Năm"
-];
-
 const container=document.getElementById("container");
 
 for(let i=0;i<25;i++){
-
     let wrapper=document.createElement("div");
     wrapper.className="lixi";
 
@@ -331,24 +321,9 @@ for(let i=0;i<25;i++){
 
     let front=document.createElement("div");
     front.className="front";
-    const images = [
-    "lixi1.jpg",
-    "lixi2.jpg",
-    "lixi3.jpg",
-    "lixi4.jpg",
-    "lixi5.jpg",
-    "lixi6.jpg",
-    "lixi7.jpg",
-    "lixi8.jpg",
-    "lixi9.jpg",
-    "lixi10.jpg",
-    "lixi11.jpg",
-    "lixi12.jpg",
-    "lixi13.jpg",
-    "lixi14.jpg"
-];
 
-front.style.background = `url(${images[i % images.length]}) center/cover no-repeat`;
+    const images=["lixi1.jpg","lixi2.jpg","lixi3.jpg","lixi4.jpg","lixi5.jpg","lixi6.jpg","lixi7.jpg","lixi8.jpg","lixi9.jpg","lixi10.jpg","lixi11.jpg","lixi12.jpg","lixi13.jpg","lixi14.jpg"];
+    front.style.background=`url(${images[i%images.length]}) center/cover no-repeat`;
 
     let flap=document.createElement("div");
     flap.className="flap";
@@ -360,19 +335,16 @@ front.style.background = `url(${images[i % images.length]}) center/cover no-repe
     card.appendChild(flap);
     card.appendChild(back);
     wrapper.appendChild(card);
-
     wrapper.onclick=()=>openCard(wrapper,back);
-
     container.appendChild(wrapper);
 }
 
 /* ===== RANDOM THƯỞNG ===== */
-
 function openCard(wrapper,back){
 
     if(wrapper.classList.contains("open")) return;
 
-    if(localStorage.getItem("opened")){
+    if(localStorage.getItem("openedDate")===getToday()){
         showPasswordScreen();
         return;
     }
@@ -381,41 +353,26 @@ function openCard(wrapper,back){
     let rewardText="";
 
     if(random < 25){
-        const wishes=[
-            "🌸 Tặng bạn một cốc nước nè!",
-            "🎉 Chúc bạn sớm có bồ nha!",
-            "💖 Gia đình lúc nào cũng vui vẻ nha!",
-            "🍀 Chúc mọi dự định của cậu trong tương lai đều suôn sẻ!",
-            "🌟 Công việc thành công nha!"
-        ];
+        const wishes=["🌸 Tặng bạn một cốc nước nè!","🎉 Chúc bạn sớm có bồ nha!","💖 Gia đình vui vẻ nha!","🍀 Chúc mọi dự định suôn sẻ!","🌟 Công việc thành công nha!"];
         rewardText=wishes[Math.floor(Math.random()*wishes.length)];
     }
     else if(random < 75){
         let amount=Math.floor(Math.random()*48+2)*2000;
         rewardText="💰 "+amount.toLocaleString("vi-VN")+" VNĐ";
     }
-    else if(random < 80){
-        rewardText="💰 500.000 VNĐ";
-    }
-    else if(random < 90){
-        rewardText="🔋 Sạc Dự Phòng";
-    }
-    else{
-        rewardText="💰 200.000 VNĐ";
-    }
+    else if(random < 80){ rewardText="💰 500.000 VNĐ"; }
+    else if(random < 90){ rewardText="🔋 Sạc Dự Phòng"; }
+    else{ rewardText="💰 200.000 VNĐ"; }
 
     back.innerText=rewardText;
-
     wrapper.classList.add("open");
-    localStorage.setItem("opened","true");
+    localStorage.setItem("openedDate",getToday());
+    showCountdownToMidnight();
 
-    setTimeout(()=>{
-        alert("🎉 Chúc mừng bạn nhận được:\n"+rewardText);
-    },800);
+    setTimeout(()=>{ alert("🎉 Chúc mừng bạn nhận được:\n"+rewardText); },800);
 }
 
 /* ===== PASSWORD ===== */
-
 function showPasswordScreen(){
     let overlay=document.createElement("div");
     overlay.className="password-screen";
@@ -429,7 +386,7 @@ function showPasswordScreen(){
     window.checkPass=function(){
         let value=document.getElementById("passInput").value;
         if(value==="LAMGICOLANHAI"){
-            localStorage.removeItem("opened");
+            localStorage.removeItem("openedDate");
             overlay.remove();
             alert("Mật khẩu đúng! Bạn có thể mở lại.");
         }else{
@@ -439,6 +396,5 @@ function showPasswordScreen(){
 }
 
 </script>
-
 </body>
 </html>
