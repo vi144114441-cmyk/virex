@@ -77,12 +77,29 @@ const db = getFirestore(app);
 
 const container = document.getElementById("lixiContainer");
 
-// Tạo 10 bao
+// Tạo 10 bao (bấm 2 lần mới mở)
 for(let i=1;i<=10;i++){
     let div = document.createElement("div");
     div.className="lixi";
     div.innerText="Bao lì xì " + i;
-    div.onclick=()=>openLixi(i,div);
+
+    let clickCount = 0;
+
+    div.addEventListener("click", ()=>{
+        if(div.classList.contains("locked")) return;
+
+        clickCount++;
+
+        if(clickCount === 2){
+            openLixi(i,div);
+            clickCount = 0;
+        }
+
+        setTimeout(()=>{
+            clickCount = 0;
+        }, 400); // 400ms giữa 2 lần bấm
+    });
+
     container.appendChild(div);
 }
 
@@ -157,4 +174,3 @@ async function openLixi(id,el){
 
 </body>
 </html>
-
