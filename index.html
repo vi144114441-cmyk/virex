@@ -331,7 +331,24 @@ for(let i=0;i<25;i++){
 
     let front=document.createElement("div");
     front.className="front";
-    front.style.background=gradients[i%gradients.length];
+    const images = [
+    "lixi1.jpg",
+    "lixi2.jpg",
+    "lixi3.jpg",
+    "lixi4.jpg",
+    "lixi5.jpg",
+    "lixi6.jpg",
+    "lixi7.jpg",
+    "lixi8.jpg",
+    "lixi9.jpg",
+    "lixi10.jpg",
+    "lixi11.jpg",
+    "lixi12.jpg",
+    "lixi13.jpg",
+    "lixi14.jpg"
+];
+
+front.style.background = `url(${images[i % images.length]}) center/cover no-repeat`;
     front.innerText=texts[i];
 
     let flap=document.createElement("div");
