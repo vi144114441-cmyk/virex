@@ -1,1 +1,160 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lì Xì 2026</title>
+
+<style>
+body{
+    margin:0;
+    padding:20px;
+    background:linear-gradient(135deg,#b30000,#ffcc00);
+    font-family:Arial, sans-serif;
+    text-align:center;
+}
+
+h2{
+    color:white;
+}
+
+.container{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+    max-width:400px;
+    margin:auto;
+}
+
+.lixi{
+    background:#c40000;
+    color:#ffd700;
+    padding:30px 10px;
+    border-radius:15px;
+    cursor:pointer;
+    font-weight:bold;
+    transition:0.3s;
+    min-height:80px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+}
+
+.lixi:hover{
+    transform:scale(1.05);
+}
+
+.locked{
+    background:#555 !important;
+    color:#ccc !important;
+    cursor:not-allowed;
+}
+</style>
+</head>
+
+<body>
+
+<h2>🧧 Lì Xì May Mắn 2026</h2>
+<div class="container" id="lixiContainer"></div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const container = document.getElementById("lixiContainer");
+
+// Tạo 10 bao
+for(let i=1;i<=10;i++){
+    let div = document.createElement("div");
+    div.className="lixi";
+    div.innerText="Bao lì xì " + i;
+    div.onclick=()=>openLixi(i,div);
+    container.appendChild(div);
+}
+
+// Tạo cấu hình phần thưởng (chạy 1 lần duy nhất)
+async function generateRewards(){
+
+    const configRef = doc(db,"lixi","config");
+    const configSnap = await getDoc(configRef);
+
+    if(configSnap.exists()) return configSnap.data().rewards;
+
+    let rewards = new Array(10).fill(null);
+    let positions = [...Array(10).keys()].sort(()=>Math.random()-0.5);
+
+    rewards[positions[0]] = {type:"money", value:500000};
+    rewards[positions[1]] = {type:"money", value:200000};
+    rewards[positions[2]] = {type:"powerbank"};
+    rewards[positions[3]] = {type:"wish"};
+    rewards[positions[4]] = {type:"wish"};
+
+    for(let i=5;i<10;i++){
+        rewards[positions[i]] = {
+            type:"money",
+            value:(Math.floor(Math.random()*10)+1)*10000
+        };
+    }
+
+    await setDoc(configRef,{rewards:rewards});
+    return rewards;
+}
+
+// Mở bao
+async function openLixi(id,el){
+
+    const ref = doc(db,"lixi","bao"+id);
+    const snap = await getDoc(ref);
+
+    if(snap.exists() && snap.data().opened){
+        el.classList.add("locked");
+        el.innerText="Đã có người mở";
+        return;
+    }
+
+    const rewards = await generateRewards();
+    const reward = rewards[id-1];
+
+    let resultText = "";
+
+    if(reward.type==="money"){
+        resultText = "💰 "+reward.value.toLocaleString()+" VNĐ";
+    }
+    else if(reward.type==="powerbank"){
+        resultText = "🔋 Chúc mừng! Bạn trúng Sạc Dự Phòng 10.000mAh";
+    }
+    else{
+        let wishes = [
+            "Chúc bạn năm mới phát tài phát lộc 🎊",
+            "An khang thịnh vượng 🌸",
+            "Sức khỏe dồi dào 💖",
+            "Vạn sự như ý ❤️"
+        ];
+        resultText = "🎊 "+wishes[Math.floor(Math.random()*wishes.length)];
+    }
+
+    await setDoc(ref,{opened:true});
+
+    el.innerHTML = resultText;
+    el.classList.add("locked");
+}
+
+</script>
+
+</body>
+</html>
 
