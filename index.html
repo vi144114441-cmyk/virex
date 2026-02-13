@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lì Xì Bính Ngọ</title>
+<title>Lì Xì Bính Ngọ 2026</title>
 
 <style>
 body{
@@ -11,98 +11,161 @@ body{
     padding:20px;
     font-family:Arial, sans-serif;
     text-align:center;
-    background:linear-gradient(135deg,#8B0000,#FFD700);
-    overflow:hidden;
+    color:white;
+    min-height:100vh;
+    overflow-y:auto;
+
+    background:
+        linear-gradient(rgba(139,0,0,0.75), rgba(139,0,0,0.75)),
+        url("horse-bg.png") center center no-repeat fixed;
+    background-size:cover;
 }
 
 h2{
-    color:white;
-    text-shadow:2px 2px 6px black;
+    text-shadow:2px 2px 10px black;
 }
 
-/* Chia đều 5 cột */
-.row{
+/* Grid 3 bao 1 dòng */
+.container{
     display:grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns:repeat(3,1fr);
     gap:20px;
-    width:100%;
-    margin:30px 0;
+    margin-top:40px;
+    padding-bottom:180px;
 }
 
-/* Lì xì */
+/* LÌ XÌ 3D */
 .lixi{
-    background:#c40000;
-    color:#ffd700;
-    padding:40px 10px;
-    border-radius:15px;
+    perspective:1000px;
     cursor:pointer;
+}
+
+.card{
+    width:100%;
+    height:140px;
+    position:relative;
+    transform-style:preserve-3d;
+    transition:transform 0.8s;
+}
+
+.lixi.open .card{
+    transform:rotateY(180deg);
+}
+
+.front, .back{
+    position:absolute;
+    width:100%;
+    height:100%;
+    backface-visibility:hidden;
+    border-radius:15px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     font-weight:bold;
-    transition:0.3s;
     font-size:18px;
 }
 
-.lixi:hover{
-    transform:scale(1.08);
+.front{
+    background:#c40000;
+    color:#ffd700;
+    box-shadow:0 5px 15px rgba(0,0,0,0.4);
 }
 
-.locked{
-    background:#555;
-    color:#ccc;
-    cursor:not-allowed;
+.back{
+    background:#fff;
+    color:#8B0000;
+    transform:rotateY(180deg);
+    box-shadow:0 5px 15px rgba(0,0,0,0.4);
 }
 
-/* Ngựa chạy */
-@keyframes horseRun {
-    0% { left:-150px; }
-    100% { left:110%; }
+/* ===== BẠCH MÃ CHẠY ===== */
+@keyframes runHorse{
+    0%{transform:translateX(-300px);}
+    100%{transform:translateX(120vw);}
 }
 
-.horse{
+.white-horse{
     position:fixed;
-    bottom:10px;
-    font-size:60px;
-    animation:horseRun 8s linear infinite;
+    bottom:20px;
+    width:100px;
+    animation:runHorse linear infinite;
+    opacity:0.9;
+    filter:drop-shadow(0 10px 10px rgba(255,255,255,0.7));
+}
+
+.wh1{animation-duration:12s;}
+.wh2{animation-duration:18s; bottom:90px;}
+.wh3{animation-duration:25s; bottom:160px;}
+
+/* Pháo lấp lánh */
+@keyframes sparkle{
+    0%{opacity:0;}
+    50%{opacity:1;}
+    100%{opacity:0;}
+}
+
+.spark{
+    position:fixed;
+    font-size:18px;
+    animation:sparkle 2s infinite;
 }
 </style>
 </head>
 
 <body>
 
-<h2>🐎🧧 Lì Xì May Mắn - Bính Ngọ 🧧🐎</h2>
+<h2>🐎🧧 LÌ XÌ MAY MẮN - BÍNH NGỌ 🧧🐎</h2>
 
-<div class="row" id="row1"></div>
-<div class="row" id="row2"></div>
+<div class="container" id="container"></div>
 
-<div class="horse">🐎</div>
+<!-- Bạch mã chạy -->
+<img src="horse-bg.png" class="white-horse wh1">
+<img src="horse-bg.png" class="white-horse wh2">
+<img src="horse-bg.png" class="white-horse wh3">
 
 <script>
 
-const row1=document.getElementById("row1");
-const row2=document.getElementById("row2");
+/* ===== RESET ĐỂ TEST ===== */
+localStorage.removeItem("opened");
 
-let alreadyOpened = localStorage.getItem("opened");
-
-// Tạo 10 bao lì xì
-for(let i=1;i<=10;i++){
-    let div=document.createElement("div");
-    div.className="lixi";
-
-    if(alreadyOpened){
-        div.innerText="Đã mở";
-        div.classList.add("locked");
-    }else{
-        div.innerText="Bao lì xì";
-        div.onclick=()=>openLixi(div);
-    }
-
-    if(i<=5){
-        row1.appendChild(div);
-    }else{
-        row2.appendChild(div);
-    }
+/* ===== PHÁO ===== */
+for(let i=0;i<40;i++){
+    let s=document.createElement("div");
+    s.className="spark";
+    s.innerText="✨";
+    s.style.top=Math.random()*200+"vh";
+    s.style.left=Math.random()*100+"vw";
+    document.body.appendChild(s);
 }
 
-function openLixi(el){
+/* ===== TẠO 20 BAO ===== */
+const container=document.getElementById("container");
+
+for(let i=0;i<20;i++){
+
+    let wrapper=document.createElement("div");
+    wrapper.className="lixi";
+
+    let card=document.createElement("div");
+    card.className="card";
+
+    let front=document.createElement("div");
+    front.className="front";
+    front.innerText="🧧 Bao lì xì";
+
+    let back=document.createElement("div");
+    back.className="back";
+
+    card.appendChild(front);
+    card.appendChild(back);
+    wrapper.appendChild(card);
+
+    wrapper.onclick=()=>openCard(wrapper,back);
+
+    container.appendChild(wrapper);
+}
+
+function openCard(wrapper,back){
 
     if(localStorage.getItem("opened")){
         alert("Bạn đã mở rồi!");
@@ -113,19 +176,21 @@ function openLixi(el){
         "💰 500.000 VNĐ",
         "💰 200.000 VNĐ",
         "💰 100.000 VNĐ",
-        "🐎 Lộc Ngựa",
+        "🔋 Sạc Dự Phòng",
         "🎊 Phát tài phát lộc",
         "❤️ An khang thịnh vượng"
     ];
 
-    let reward = rewards[Math.floor(Math.random()*rewards.length)];
+    let reward=rewards[Math.floor(Math.random()*rewards.length)];
 
-    el.innerHTML=reward;
-    el.classList.add("locked");
+    back.innerText=reward;
+    wrapper.classList.add("open");
 
     localStorage.setItem("opened","true");
 
-    alert("🎉 Chúc mừng bạn nhận được: " + reward);
+    setTimeout(()=>{
+        alert("🎉 Chúc mừng bạn nhận được: "+reward);
+    },500);
 }
 
 </script>
