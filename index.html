@@ -380,7 +380,7 @@ function openCard(wrapper,back){
     let random=Math.random()*100;
     let rewardText="";
 
-    if(random < 35){
+    if(random < 25){
         const wishes=[
             "🌸 Tặng bạn một cốc nước nè!",
             "🎉 Chúc bạn sớm có bồ nha!",
@@ -428,7 +428,7 @@ function showPasswordScreen(){
 
     window.checkPass=function(){
         let value=document.getElementById("passInput").value;
-        if(value==="KHONGCODAUSOIA"){
+        if(value==="LAMGICOLANHAI"){
             localStorage.removeItem("opened");
             overlay.remove();
             alert("Mật khẩu đúng! Bạn có thể mở lại.");
