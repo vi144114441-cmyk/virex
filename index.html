@@ -6,6 +6,8 @@
 <title>Lì Xì Bính Ngọ 2026</title>
 
 <style>
+*{box-sizing:border-box;}
+
 body{
     margin:0;
     font-family:Arial, sans-serif;
@@ -15,16 +17,16 @@ body{
     overflow-x:hidden;
 }
 
-/* ===== NỀN NGỰA VÀNG ===== */
+/* ===== NGỰA VÀNG ===== */
 .golden-horse{
     position:fixed;
     bottom:0;
     left:50%;
     transform:translateX(-50%);
-    width:320px;
-    opacity:0.12;
+    width:50%;
+    max-width:400px;
+    opacity:0.08;
     pointer-events:none;
-    z-index:0;
 }
 
 /* ===== PHÁO HOA ===== */
@@ -34,69 +36,71 @@ body{
     height:6px;
     border-radius:50%;
     pointer-events:none;
-    animation:explode 1.2s ease-out forwards;
+    animation:explode 1s ease-out forwards;
 }
 
 @keyframes explode{
-    0%{
-        transform:scale(0.5);
-        opacity:1;
-    }
-    100%{
-        transform:scale(3);
-        opacity:0;
-    }
+    0%{ transform:scale(0.5); opacity:1; }
+    100%{ transform:scale(3); opacity:0; }
 }
 
-/* ===== MÀN HÌNH CHÚC MỪNG ===== */
+/* ===== WELCOME ===== */
 .welcome-screen{
     position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
+    inset:0;
     background:linear-gradient(#8B0000,#a00000);
     display:flex;
     flex-direction:column;
     justify-content:center;
     align-items:center;
-    padding:30px;
+    padding:20px;
     z-index:9999;
 }
 
 .welcome-screen h1{
-    font-size:20px;
+    font-size:clamp(18px,3vw,26px);
     line-height:1.6;
+    max-width:800px;
 }
 
 .welcome-screen button{
-    margin-top:30px;
-    padding:15px 30px;
-    font-size:18px;
+    margin-top:25px;
+    padding:14px 32px;
+    font-size:clamp(16px,2.5vw,20px);
     border:none;
-    border-radius:15px;
+    border-radius:18px;
     background:gold;
     color:#8B0000;
     font-weight:bold;
     cursor:pointer;
+    transition:0.3s;
 }
 
-/* ===== GIAO DIỆN CHÍNH ===== */
+.welcome-screen button:hover{
+    transform:scale(1.05);
+}
+
+/* ===== MAIN ===== */
 .main-content{
     display:none;
-    padding:20px;
-    position:relative;
-    z-index:1;
+    padding:30px 15px;
 }
 
+h2{
+    font-size:clamp(20px,3vw,28px);
+}
+
+/* ===== GRID RESPONSIVE ===== */
 .container{
     display:grid;
-    grid-template-columns:repeat(3,1fr);
     gap:18px;
     margin-top:30px;
-    max-width:750px;
+    width:100%;
+    max-width:1200px;
     margin-left:auto;
     margin-right:auto;
+    padding:0 15px;
+    grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
 }
 
 /* ===== BAO LÌ XÌ ===== */
@@ -107,8 +111,9 @@ body{
 }
 
 .card{
-    width:95px;
-    height:190px;
+    width:100%;
+    max-width:150px;
+    aspect-ratio:1 / 2;
     position:relative;
     transform-style:preserve-3d;
     transition:transform 0.8s;
@@ -124,16 +129,16 @@ body{
     width:100%;
     height:100%;
     backface-visibility:hidden;
-    border-radius:18px;
+    border-radius:20px;
     display:flex;
     align-items:center;
     justify-content:center;
     font-weight:bold;
-    font-size:13px;
-    padding:8px;
+    font-size:clamp(13px,2.5vw,16px);
+    padding:10px;
     text-align:center;
     white-space:pre-line;
-    box-shadow:0 8px 20px rgba(0,0,0,0.5);
+    box-shadow:0 8px 20px rgba(0,0,0,0.4);
 }
 
 .front{
@@ -146,41 +151,53 @@ body{
     transform:rotateY(180deg);
 }
 
-/* PASSWORD */
+/* ===== PASSWORD ===== */
 .password-screen{
     position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
+    inset:0;
     background:#8B0000;
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
     z-index:9999;
+    padding:20px;
+}
+
+.password-screen input{
+    padding:14px;
+    font-size:18px;
+    border-radius:15px;
+    border:none;
+    width:90%;
+    max-width:300px;
+    text-align:center;
+}
+
+.password-screen button{
+    margin-top:15px;
+    padding:12px 28px;
+    border-radius:15px;
+    border:none;
+    font-size:16px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- Ngựa vàng (đổi ảnh thành golden-horse.png nếu có) -->
 <img src="golden-horse.png" class="golden-horse">
 
-<!-- ===== MÀN HÌNH CHÚC MỪNG ===== -->
 <div class="welcome-screen" id="welcome">
     <h1>
     🎉 CHÚC MỪNG NĂM MỚI 2026 🎉<br><br>
-    CHÚC BẠN NĂM MỚI CÓ ĐƯỢC NHIỀU THÀNH CÔNG<br>
+    CHÚC BẠN NĂM MỚI THÀNH CÔNG<br>
     GIA ĐÌNH HẠNH PHÚC<br>
-    SỨC KHỎE DỒI DÀO<br>
-    TÌNH CẢM TRÀN TRỀ ❤️
+    SỨC KHỎE DỒI DÀO ❤️
     </h1>
     <button onclick="enterApp()">Nhận Lì Xì 🧧</button>
 </div>
 
-<!-- ===== GIAO DIỆN CHÍNH ===== -->
 <div class="main-content" id="main">
     <h2>🧧 LÌ XÌ MAY MẮN - BÍNH NGỌ 2026 🧧</h2>
     <div class="container" id="container"></div>
@@ -188,21 +205,20 @@ body{
 
 <script>
 
-/* ===== PHÁO HOA 7 MÀU ===== */
-const colors = ["red","orange","yellow","green","blue","indigo","violet"];
-
+/* ===== PHÁO HOA ===== */
+const colors=["red","orange","yellow","green","blue","indigo","violet"];
 function createFirework(){
-    for(let i=0;i<20;i++){
+    for(let i=0;i<15;i++){
         let fw=document.createElement("div");
         fw.className="firework";
         fw.style.background=colors[Math.floor(Math.random()*colors.length)];
         fw.style.left=Math.random()*100+"vw";
-        fw.style.top=Math.random()*60+"vh";
+        fw.style.top=Math.random()*70+"vh";
         document.body.appendChild(fw);
-        setTimeout(()=>fw.remove(),1200);
+        setTimeout(()=>fw.remove(),1000);
     }
 }
-setInterval(createFirework,1500);
+setInterval(createFirework,2000);
 
 /* ===== VÀO APP ===== */
 function enterApp(){
@@ -210,8 +226,8 @@ function enterApp(){
     document.getElementById("main").style.display="block";
 }
 
-/* ===== BAO KHÁC NHAU ===== */
-const gradients = [
+/* ===== PHONG BAO ===== */
+const gradients=[
 "linear-gradient(#c40000,#8b0000)",
 "linear-gradient(#d32f2f,#b71c1c)",
 "linear-gradient(#aa0000,#7f0000)",
@@ -220,13 +236,14 @@ const gradients = [
 "linear-gradient(#d84315,#bf360c)"
 ];
 
-const texts = [
-"🧧 Phát Tài",
-"🧧 Lộc Xuân",
-"🧧 May Mắn",
-"🧧 Đại Cát",
-"🧧 Bình An",
-"🧧 Tấn Lộc"
+const texts=[
+"🧧 Phát Tài","🧧 Lộc Xuân","🧧 May Mắn","🧧 Đại Cát","🧧 Bình An",
+"🧧 Tấn Lộc","🎊 An Khang Thịnh Vượng","🌸 Vạn Sự Như Ý",
+"🎉 Tấn Tài Tấn Lộc","🐎 Mã Đáo Thành Công",
+"💰 Tiền Vào Như Nước","🌟 Công Danh Rạng Rỡ",
+"🎁 Phúc Lộc Đầy Nhà","🍀 Gặp Nhiều May Mắn",
+"🏮 Xuân An Nhiên","✨ Thành Công Rực Rỡ",
+"❤️ Gia Đình Hạnh Phúc","🌺 Xuân Như Ý"
 ];
 
 const container=document.getElementById("container");
@@ -260,8 +277,8 @@ function showPasswordScreen(){
     overlay.className="password-screen";
     overlay.innerHTML=`
         <h2>🔒 Nhập mật khẩu để mở lại</h2>
-        <input type="password" id="passInput" style="padding:15px;font-size:18px;border-radius:15px;">
-        <button onclick="checkPass()" style="margin-top:15px;padding:12px 25px;border-radius:15px;">Xác nhận</button>
+        <input type="password" id="passInput">
+        <button onclick="checkPass()">Xác nhận</button>
     `;
     document.body.appendChild(overlay);
 
@@ -277,8 +294,10 @@ function showPasswordScreen(){
     }
 }
 
-/* ===== RANDOM TỈ LỆ ===== */
-function openCard(wrapper, back){
+/* ===== MỞ BAO ===== */
+function openCard(wrapper,back){
+
+    if(wrapper.classList.contains("open")) return;
 
     if(localStorage.getItem("opened")){
         showPasswordScreen();
@@ -288,26 +307,29 @@ function openCard(wrapper, back){
     let random=Math.random()*100;
     let rewardText="";
 
-    if(random<5){
+    /* 30% chỉ lời chúc */
+    if(random < 30){
+        const specialWishes=[
+            "🌸 Năm mới an khang thịnh vượng!",
+            "🎉 Chúc bạn vạn sự như ý!",
+            "💖 Gia đình luôn hạnh phúc!",
+            "🍀 Một năm đầy may mắn!",
+            "🌟 Thành công rực rỡ trong năm mới!"
+        ];
+        rewardText=specialWishes[Math.floor(Math.random()*specialWishes.length)];
+    }
+    else if(random < 35){
         rewardText="💰 500.000 VNĐ";
     }
-    else if(random<15){
+    else if(random < 45){
         rewardText="🔋 Sạc Dự Phòng";
     }
-    else if(random<25){
+    else if(random < 55){
         rewardText="💰 200.000 VNĐ";
     }
     else{
         let amount=Math.floor(Math.random()*(100-5+1)+5)*1000;
-        let wishes=[
-            "🎊 Phát tài phát lộc!",
-            "🌸 Vạn sự như ý!",
-            "🎉 Tấn tài tấn lộc!",
-            "🐎 Mã đáo thành công!",
-            "❤️ An khang thịnh vượng!"
-        ];
-        let wish=wishes[Math.floor(Math.random()*wishes.length)];
-        rewardText="💰 "+amount.toLocaleString("vi-VN")+" VNĐ\n"+wish;
+        rewardText="💰 "+amount.toLocaleString("vi-VN")+" VNĐ\n🎊 Chúc bạn phát tài!";
     }
 
     back.innerText=rewardText;
