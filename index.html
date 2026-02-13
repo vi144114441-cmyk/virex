@@ -3,128 +3,129 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lì Xì 2026</title>
+<title>Lì Xì Bính Ngọ</title>
 
 <style>
 body{
     margin:0;
     padding:20px;
-    background:linear-gradient(135deg,#b30000,#ffcc00);
     font-family:Arial, sans-serif;
     text-align:center;
+    background:linear-gradient(135deg,#8B0000,#FFD700);
+    overflow:hidden;
 }
 
 h2{
     color:white;
+    text-shadow:2px 2px 6px black;
 }
 
-.container{
+/* Chia đều 5 cột */
+.row{
     display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:15px;
-    max-width:400px;
-    margin:auto;
+    grid-template-columns: repeat(5, 1fr);
+    gap:20px;
+    width:100%;
+    margin:30px 0;
 }
 
+/* Lì xì */
 .lixi{
     background:#c40000;
     color:#ffd700;
-    padding:30px 10px;
+    padding:40px 10px;
     border-radius:15px;
     cursor:pointer;
     font-weight:bold;
     transition:0.3s;
-    min-height:80px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    text-align:center;
+    font-size:18px;
 }
 
 .lixi:hover{
-    transform:scale(1.05);
+    transform:scale(1.08);
 }
 
 .locked{
-    background:#555 !important;
-    color:#ccc !important;
+    background:#555;
+    color:#ccc;
     cursor:not-allowed;
+}
+
+/* Ngựa chạy */
+@keyframes horseRun {
+    0% { left:-150px; }
+    100% { left:110%; }
+}
+
+.horse{
+    position:fixed;
+    bottom:10px;
+    font-size:60px;
+    animation:horseRun 8s linear infinite;
 }
 </style>
 </head>
 
 <body>
 
-<h2>🧧 Lì Xì May Mắn 2026</h2>
-<div class="container" id="lixiContainer"></div>
+<h2>🐎🧧 Lì Xì May Mắn - Bính Ngọ 🧧🐎</h2>
+
+<div class="row" id="row1"></div>
+<div class="row" id="row2"></div>
+
+<div class="horse">🐎</div>
 
 <script>
 
-const container = document.getElementById("lixiContainer");
+const row1=document.getElementById("row1");
+const row2=document.getElementById("row2");
 
-// Tạo phần thưởng random
-let rewards = new Array(10).fill(null);
-let positions = [...Array(10).keys()].sort(()=>Math.random()-0.5);
+let alreadyOpened = localStorage.getItem("opened");
 
-rewards[positions[0]] = {type:"money", value:500000};
-rewards[positions[1]] = {type:"money", value:200000};
-rewards[positions[2]] = {type:"powerbank"};
-rewards[positions[3]] = {type:"wish"};
-rewards[positions[4]] = {type:"wish"};
+// Tạo 10 bao lì xì
+for(let i=1;i<=10;i++){
+    let div=document.createElement("div");
+    div.className="lixi";
 
-for(let i=5;i<10;i++){
-    rewards[positions[i]] = {
-        type:"money",
-        value:(Math.floor(Math.random()*10)+1)*10000
-    };
+    if(alreadyOpened){
+        div.innerText="Đã mở";
+        div.classList.add("locked");
+    }else{
+        div.innerText="Bao lì xì";
+        div.onclick=()=>openLixi(div);
+    }
+
+    if(i<=5){
+        row1.appendChild(div);
+    }else{
+        row2.appendChild(div);
+    }
 }
 
-// Tạo 10 bao
-for(let i=1;i<=10;i++){
+function openLixi(el){
 
-    let div = document.createElement("div");
-    div.className="lixi";
-    div.innerText="Bao lì xì " + i;
+    if(localStorage.getItem("opened")){
+        alert("Bạn đã mở rồi!");
+        return;
+    }
 
-    let clickCount = 0;
+    let rewards=[
+        "💰 500.000 VNĐ",
+        "💰 200.000 VNĐ",
+        "💰 100.000 VNĐ",
+        "🐎 Lộc Ngựa",
+        "🎊 Phát tài phát lộc",
+        "❤️ An khang thịnh vượng"
+    ];
 
-    div.addEventListener("click", ()=>{
+    let reward = rewards[Math.floor(Math.random()*rewards.length)];
 
-        if(div.classList.contains("locked")) return;
+    el.innerHTML=reward;
+    el.classList.add("locked");
 
-        clickCount++;
+    localStorage.setItem("opened","true");
 
-        if(clickCount === 2){
-
-            const reward = rewards[i-1];
-            let resultText = "";
-
-            if(reward.type==="money"){
-                resultText = "💰 "+reward.value.toLocaleString()+" VNĐ";
-            }
-            else if(reward.type==="powerbank"){
-                resultText = "🔋 Chúc mừng! Bạn trúng Sạc Dự Phòng 10.000mAh";
-            }
-            else{
-                let wishes = [
-                    "Chúc bạn năm mới phát tài phát lộc 🎊",
-                    "An khang thịnh vượng 🌸",
-                    "Sức khỏe dồi dào 💖",
-                    "Vạn sự như ý ❤️"
-                ];
-                resultText = "🎊 "+wishes[Math.floor(Math.random()*wishes.length)];
-            }
-
-            div.innerHTML = resultText;
-            div.classList.add("locked");
-            clickCount = 0;
-        }
-
-        setTimeout(()=>{ clickCount = 0; },400);
-
-    });
-
-    container.appendChild(div);
+    alert("🎉 Chúc mừng bạn nhận được: " + reward);
 }
 
 </script>
