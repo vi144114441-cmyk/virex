@@ -1,24 +1,375 @@
-<!-- NHẠC NỀN -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lì Xì 3D Bính Ngọ 2026</title>
+
+<style>
+*{box-sizing:border-box;}
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    text-align:center;
+    color:white;
+    overflow-x:hidden;
+    background: linear-gradient(135deg,#8B0000,#ff0000,#b71c1c);
+}
+
+/* ===== PHÁO HOA ===== */
+.rocket{
+    position:fixed;
+    width:4px;height:12px;
+    background:gold;
+    border-radius:2px;
+    box-shadow:0 0 10px gold;
+    pointer-events:none;
+}
+.firework{
+    position:fixed;
+    width:6px;height:6px;
+    border-radius:50%;
+    pointer-events:none;
+    animation:explode 1.2s ease-out forwards;
+    box-shadow:0 0 12px currentColor;
+}
+@keyframes explode{
+    from{transform:translate(0,0);opacity:1;}
+    to{transform:translate(var(--x),var(--y));opacity:0;}
+}
+
+/* ===== WELCOME + NHẬP TÊN ===== */
+.welcome-screen{
+    position:fixed;inset:0;
+    background:linear-gradient(#8B0000,#a00000);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+.welcome-screen input{
+    padding:14px;
+    font-size:18px;
+    border-radius:15px;
+    border:none;
+    width:90%;max-width:300px;
+    text-align:center;
+    margin-top:20px;
+}
+.welcome-screen button{
+    margin-top:20px;
+    padding:14px 32px;
+    border:none;
+    border-radius:18px;
+    background:gold;
+    color:#8B0000;
+    font-weight:bold;
+}
+
+/* MAIN */
+.main-content{display:none;padding:30px 15px;}
+.container{
+    display:grid;
+    gap:20px;
+    margin:30px auto 0;
+    width:100%;
+    max-width:1200px;
+    grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+}
+
+/* LÌ XÌ */
+.lixi{display:flex;justify-content:center;perspective:1000px;}
+.card{
+    width:100%;max-width:150px;
+    aspect-ratio:1/2;
+    position:relative;
+    transform-style:preserve-3d;
+    cursor:pointer;
+}
+.front{
+    position:absolute;
+    width:100%;height:100%;
+    border-radius:18px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.4);
+}
+.flap{
+    position:absolute;
+    top:0;width:100%;height:50%;
+    background:linear-gradient(#d32f2f,#aa0000);
+    clip-path:polygon(0 0,100% 0,50% 100%);
+    transform-origin:top;
+    transition:transform 0.8s;
+}
+.back{
+    position:absolute;
+    width:80%;height:60%;
+    top:25%;left:10%;
+    background:white;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:10px;
+    font-weight:bold;
+    color:#8B0000;
+    transform:translateY(60px);
+    opacity:0;
+    transition:all 0.8s;
+}
+.lixi.open .flap{transform:rotateX(-150deg);}
+.lixi.open .back{transform:translateY(-30px);opacity:1;}
+
+.password-screen{
+    position:fixed;inset:0;
+    background:#8B0000;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    z-index:9999;
+}
+.password-screen input{
+    padding:14px;
+    font-size:18px;
+    border-radius:15px;
+    border:none;
+    width:90%;max-width:300px;
+    text-align:center;
+}
+.password-screen button{
+    margin-top:15px;
+    padding:12px 28px;
+    border-radius:15px;
+    border:none;
+}
+
+#countdownBox{
+    position:fixed;
+    bottom:15px;
+    left:50%;
+    transform:translateX(-50%);
+    background:rgba(0,0,0,0.7);
+    padding:10px 20px;
+    border-radius:12px;
+    font-size:14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="welcome-screen" id="welcome">
+    <h1>🎉 CHÚC MỪNG NĂM MỚI 2026 🎉</h1>
+    <input id="playerName" placeholder="Nhập tên của bạn">
+    <button onclick="enterApp()">Nhận Lì Xì 🧧</button>
+</div>
+
+<div class="main-content" id="main">
+    <h2>🧧 LÌ XÌ MAY MẮN - BÍNH NGỌ 2026 🧧</h2>
+    <div class="container" id="container"></div>
+</div>
+
 <audio id="bgMusic" src="nhactet.mp3" loop></audio>
 
 <script>
-const music = document.getElementById("bgMusic");
 
-// Khi vào app sẽ phát nhạc
+const WEBAPP_URL="https://script.google.com/macros/s/AKfycbz58kCVNFXfj-8sDwM2qaNu_Wvcu9908looXkHtNnPxbN0L85mwVNl0O8Mjn3xfOLnZ4g/exec";
+
+let appStarted=false;
+let playerName="";
+
+/* GỬI GOOGLE SHEETS */
+function sendToSheet(name,reward){
+    fetch(WEBAPP_URL,{
+        method:"POST",
+        body:JSON.stringify({
+            name:name,
+            reward:reward,
+            time:new Date().toLocaleString()
+        })
+    });
+}
+
+/* NGÀY */
+function getToday(){
+    let now=new Date();
+    return now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,'0')+"-"+String(now.getDate()).padStart(2,'0');
+}
+
+/* VÀO APP */
 function enterApp(){
+    let name=document.getElementById("playerName").value.trim();
+    if(!name){ alert("Vui lòng nhập tên!"); return; }
+
+    playerName=name;
     document.getElementById("welcome").style.display="none";
     document.getElementById("main").style.display="block";
     appStarted=true;
+    document.getElementById("bgMusic").play().catch(()=>{});
+}
 
-    music.play().catch(() => {
-        // Nếu trình duyệt chặn, click bất kỳ sẽ phát
-        document.addEventListener("click", () => {
-            music.play();
-        }, { once: true });
-    });
+/* RESET + ĐỒNG HỒ */
+function showCountdownToMidnight(){
+    if(document.getElementById("countdownBox")) return;
+
+    let box=document.createElement("div");
+    box.id="countdownBox";
+    document.body.appendChild(box);
+
+    function update(){
+        let now=new Date();
+        let midnight=new Date();
+        midnight.setHours(24,0,0,0);
+        let diff=midnight-now;
+
+        if(diff<=0){
+            localStorage.removeItem("openedDate");
+            location.reload();
+        }
+
+        let h=Math.floor(diff/(1000*60*60));
+        let m=Math.floor((diff%(1000*60*60))/(1000*60));
+        let s=Math.floor((diff%(1000*60))/1000);
+
+        box.innerHTML="⏳ Reset lúc 00:00 còn: "+h+"h "+m+"m "+s+"s";
+    }
+
+    update();
+    setInterval(update,1000);
+}
+
+/* PHÁO HOA */
+function launchRocket(x){
+    let rocket=document.createElement("div");
+    rocket.className="rocket";
+    rocket.style.left=x+"px";
+    rocket.style.bottom="0px";
+    document.body.appendChild(rocket);
+
+    let height=Math.random()*window.innerHeight*0.5+150;
+    let pos=0;
+
+    let fly=setInterval(()=>{
+        pos+=8;
+        rocket.style.bottom=pos+"px";
+        if(pos>=height){
+            clearInterval(fly);
+            rocket.remove();
+            explodeHeart(x,window.innerHeight-height);
+        }
+    },16);
+}
+
+function explodeHeart(x,y){
+    const particles=120;
+    const scale=10;
+    for(let i=0;i<particles;i++){
+        const t=(i/particles)*Math.PI*2;
+        const heartX=16*Math.pow(Math.sin(t),3);
+        const heartY=13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t);
+
+        let fw=document.createElement("div");
+        fw.className="firework";
+        fw.style.left=x+"px";
+        fw.style.top=y+"px";
+        fw.style.color=i%2===0?"gold":"#ff0044";
+        fw.style.background="currentColor";
+        fw.style.setProperty("--x",heartX*scale+"px");
+        fw.style.setProperty("--y",-heartY*scale+"px");
+        document.body.appendChild(fw);
+        setTimeout(()=>fw.remove(),1200);
+    }
+}
+
+setInterval(()=>{ if(appStarted) launchRocket(Math.random()*window.innerWidth); },3000);
+document.addEventListener("click",(e)=>{ if(appStarted) launchRocket(e.clientX); });
+
+/* TẠO 25 BAO */
+const container=document.getElementById("container");
+for(let i=0;i<25;i++){
+    let wrapper=document.createElement("div");
+    wrapper.className="lixi";
+
+    let card=document.createElement("div");
+    card.className="card";
+
+    let front=document.createElement("div");
+    front.className="front";
+    const images=["lixi1.jpg","lixi2.jpg","lixi3.jpg","lixi4.jpg","lixi5.jpg","lixi6.jpg","lixi7.jpg","lixi8.jpg","lixi9.jpg","lixi10.jpg","lixi11.jpg","lixi12.jpg","lixi13.jpg","lixi14.jpg"];
+    front.style.background=`url(${images[i%images.length]}) center/cover no-repeat`;
+
+    let flap=document.createElement("div");
+    flap.className="flap";
+
+    let back=document.createElement("div");
+    back.className="back";
+
+    card.appendChild(front);
+    card.appendChild(flap);
+    card.appendChild(back);
+    wrapper.appendChild(card);
+    wrapper.onclick=()=>openCard(wrapper,back);
+    container.appendChild(wrapper);
+}
+
+/* RANDOM THƯỞNG */
+function openCard(wrapper,back){
+    if(wrapper.classList.contains("open")) return;
 
     if(localStorage.getItem("openedDate")===getToday()){
-        showCountdownToMidnight();
+        showPasswordScreen();
+        return;
+    }
+
+    let random=Math.random()*100;
+    let rewardText="";
+
+    if(random < 25){
+        const wishes=["🌸 Tặng bạn một cốc nước nè!","🎉 Chúc bạn sớm có bồ nha!","💖 Gia đình vui vẻ nha!","🍀 Chúc mọi dự định suôn sẻ!","🌟 Công việc thành công nha!"];
+        rewardText=wishes[Math.floor(Math.random()*wishes.length)];
+    }
+    else if(random < 75){
+        let amount=Math.floor(Math.random()*48+2)*2000;
+        rewardText="💰 "+amount.toLocaleString("vi-VN")+" VNĐ";
+    }
+    else if(random < 80){ rewardText="💰 500.000 VNĐ"; }
+    else if(random < 90){ rewardText="🔋 Sạc Dự Phòng"; }
+    else{ rewardText="💰 200.000 VNĐ"; }
+
+    back.innerText=rewardText;
+    wrapper.classList.add("open");
+    localStorage.setItem("openedDate",getToday());
+    showCountdownToMidnight();
+
+    sendToSheet(playerName,rewardText);
+
+    setTimeout(()=>{ alert("🎉 "+playerName+" nhận được:\n"+rewardText); },800);
+}
+
+/* PASSWORD */
+function showPasswordScreen(){
+    let overlay=document.createElement("div");
+    overlay.className="password-screen";
+    overlay.innerHTML=`
+        <h2>🔒 Nhập mật khẩu để mở lại</h2>
+        <input type="password" id="passInput">
+        <button onclick="checkPass()">Xác nhận</button>
+    `;
+    document.body.appendChild(overlay);
+
+    window.checkPass=function(){
+        let value=document.getElementById("passInput").value;
+        if(value==="LAMGICOLANHAI"){
+            localStorage.removeItem("openedDate");
+            overlay.remove();
+            alert("Mật khẩu đúng! Bạn có thể mở lại.");
+        }else{
+            alert("Sai mật khẩu!");
+        }
     }
 }
 </script>
+</body>
+</html>
