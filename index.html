@@ -6,151 +6,171 @@
 <title>Lì Xì 3D Bính Ngọ 2026</title>
 
 <style>
+*{box-sizing:border-box;}
 body{
     margin:0;
-    font-family:Arial;
+    font-family:Arial, sans-serif;
     text-align:center;
-    background:linear-gradient(135deg,#8B0000,#b30000);
     color:white;
-    overflow:hidden;
+    overflow-x:hidden;
+    background: linear-gradient(135deg,#8B0000,#ff0000,#b71c1c);
 }
 
-h1{margin-top:20px;}
-
-input{
-    padding:10px;
-    border:none;
-    border-radius:8px;
-    font-size:16px;
-}
-
-button{
-    padding:10px 20px;
-    border:none;
-    border-radius:8px;
+/* PHÁO HOA */
+.rocket{
+    position:fixed;
+    width:4px;height:12px;
     background:gold;
-    font-weight:bold;
-    cursor:pointer;
+    border-radius:2px;
+    box-shadow:0 0 10px gold;
+    pointer-events:none;
+}
+.firework{
+    position:fixed;
+    width:6px;height:6px;
+    border-radius:50%;
+    pointer-events:none;
+    animation:explode 1.2s ease-out forwards;
+    box-shadow:0 0 12px currentColor;
+}
+@keyframes explode{
+    from{transform:translate(0,0);opacity:1;}
+    to{transform:translate(var(--x),var(--y));opacity:0;}
 }
 
-#countdown{
-    margin-top:10px;
-    font-size:18px;
-    color:#FFD700;
-}
-
-.card-container{
-    perspective:1000px;
-    width:220px;
-    height:320px;
-    margin:40px auto;
-}
-
-.card{
-    width:100%;
-    height:100%;
-    position:relative;
-    transform-style:preserve-3d;
-    transition:1s;
-}
-
-.card.open{
-    transform:rotateY(180deg);
-}
-
-.front,.back{
-    position:absolute;
-    width:100%;
-    height:100%;
-    backface-visibility:hidden;
-    border-radius:15px;
-}
-
-.front{
-    background:url('lixi1.png') center/cover;
-}
-
-.back{
-    background:gold;
-    color:red;
-    font-size:28px;
+/* NHẬP TÊN */
+.welcome-screen{
+    position:fixed;inset:0;
+    background:linear-gradient(#8B0000,#a00000);
     display:flex;
+    flex-direction:column;
     justify-content:center;
     align-items:center;
-    transform:rotateY(180deg);
+    z-index:9999;
+}
+.welcome-screen input{
+    padding:14px;
+    font-size:18px;
+    border-radius:15px;
+    border:none;
+    width:90%;max-width:300px;
+    text-align:center;
+    margin-top:20px;
+}
+.welcome-screen button{
+    margin-top:20px;
+    padding:14px 32px;
+    border:none;
+    border-radius:18px;
+    background:gold;
+    color:#8B0000;
+    font-weight:bold;
 }
 
-.firework{
+/* MAIN */
+.main-content{display:none;padding:30px 15px;}
+.container{
+    display:grid;
+    gap:20px;
+    margin:30px auto 0;
+    width:100%;
+    max-width:1200px;
+    grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+}
+
+/* LÌ XÌ */
+.lixi{display:flex;justify-content:center;perspective:1000px;}
+.card{
+    width:100%;max-width:150px;
+    aspect-ratio:1/2;
+    position:relative;
+    transform-style:preserve-3d;
+    cursor:pointer;
+}
+.front{
     position:absolute;
-    font-size:30px;
-    animation:explode 1s ease-out forwards;
+    width:100%;height:100%;
+    border-radius:18px;
+    background:#b71c1c;
+    box-shadow:0 10px 25px rgba(0,0,0,0.4);
 }
+.flap{
+    position:absolute;
+    top:0;width:100%;height:50%;
+    background:linear-gradient(#d32f2f,#aa0000);
+    clip-path:polygon(0 0,100% 0,50% 100%);
+    transform-origin:top;
+    transition:transform 0.8s;
+}
+.back{
+    position:absolute;
+    width:80%;height:60%;
+    top:25%;left:10%;
+    background:white;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:10px;
+    font-weight:bold;
+    color:#8B0000;
+    transform:translateY(60px);
+    opacity:0;
+    transition:all 0.8s;
+}
+.lixi.open .flap{transform:rotateX(-150deg);}
+.lixi.open .back{transform:translateY(-30px);opacity:1;}
 
-@keyframes explode{
-    0%{opacity:1;transform:scale(0);}
-    100%{opacity:0;transform:scale(3);}
+.overlay{
+    position:fixed;inset:0;
+    background:#8B0000;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+.overlay input{
+    padding:14px;
+    font-size:18px;
+    border-radius:15px;
+    border:none;
+    width:90%;max-width:300px;
+    text-align:center;
+    margin-top:15px;
+}
+.overlay button{
+    margin-top:15px;
+    padding:12px 28px;
+    border-radius:15px;
+    border:none;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🧧 LÌ XÌ 3D BÍNH NGỌ 2026 🐴</h1>
+<div class="welcome-screen" id="welcome">
+    <h1>🎉 CHÚC MỪNG NĂM MỚI 2026 🎉</h1>
+    <input id="playerNameStart" placeholder="Nhập tên của bạn">
+    <button onclick="enterApp()">Nhận Lì Xì 🧧</button>
+</div>
 
-<input type="text" id="nameInput" placeholder="Nhập tên của bạn">
-<br><br>
-<button onclick="openCard()">MỞ LÌ XÌ</button>
-
-<div id="countdown"></div>
-
-<div class="card-container">
-    <div class="card" id="card">
-        <div class="front"></div>
-        <div class="back" id="rewardText">???</div>
-    </div>
+<div class="main-content" id="main">
+    <h2>🧧 LÌ XÌ MAY MẮN - BÍNH NGỌ 2026 🧧</h2>
+    <div id="countdown" style="margin-top:10px;font-size:18px;color:gold;"></div>
+    <div class="container" id="container"></div>
 </div>
 
 <audio id="bgMusic" src="nhactet.mp3" loop></audio>
 
 <script>
+
 const WEBAPP_URL="https://script.google.com/macros/s/AKfycbz58kCVNFXfj-8sDwM2qaNu_Wvcu9908looXkHtNnPxbN0L85mwVNl0O8Mjn3xfOLnZ4g/exec";
 
-const rewards=[
-"20.000đ 💰",
-"50.000đ 💰",
-"100.000đ 💰",
-"200.000đ 💰",
-"Chúc Mừng Năm Mới 🎉",
-"May Mắn Cả Năm ✨"
-];
-
-function getToday(){
-    return new Date().toLocaleDateString();
-}
-
-function openCard(){
-    const name=document.getElementById("nameInput").value.trim();
-    if(name===""){
-        alert("Vui lòng nhập tên!");
-        return;
-    }
-
-    if(localStorage.getItem("openedDate")===getToday()){
-        alert("Bạn đã mở hôm nay rồi!");
-        return;
-    }
-
-    const reward=rewards[Math.floor(Math.random()*rewards.length)];
-    document.getElementById("rewardText").innerText=reward;
-    document.getElementById("card").classList.add("open");
-
-    localStorage.setItem("openedDate",getToday());
-    showCountdown();
-
-    sendToSheet(name,reward);
-    playMusic();
-    firework();
-}
+let playerName="";
+let started=false;
 
 function sendToSheet(name,reward){
     fetch(WEBAPP_URL,{
@@ -159,41 +179,154 @@ function sendToSheet(name,reward){
     });
 }
 
-function playMusic(){
-    const music=document.getElementById("bgMusic");
-    music.play();
+function getToday(){
+    let now=new Date();
+    return now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,'0')+"-"+String(now.getDate()).padStart(2,'0');
 }
 
-function firework(){
-    for(let i=0;i<10;i++){
-        const fw=document.createElement("div");
+function enterApp(){
+    let name=document.getElementById("playerNameStart").value.trim();
+    if(!name){ alert("Vui lòng nhập tên!"); return; }
+    playerName=name;
+    document.getElementById("welcome").style.display="none";
+    document.getElementById("main").style.display="block";
+    started=true;
+}
+
+/* NHẠC */
+function playMusic(){
+    document.getElementById("bgMusic").play().catch(()=>{});
+}
+
+/* ĐỒNG HỒ RESET */
+function updateCountdown(){
+    const now=new Date();
+    const tomorrow=new Date();
+    tomorrow.setHours(24,0,0,0);
+    const diff=tomorrow-now;
+
+    const h=Math.floor(diff/1000/60/60);
+    const m=Math.floor(diff/1000/60%60);
+    const s=Math.floor(diff/1000%60);
+
+    document.getElementById("countdown").innerText=
+    "⏳ Reset sau: "+h+"h "+m+"m "+s+"s";
+}
+setInterval(updateCountdown,1000);
+updateCountdown();
+
+/* PHÁO HOA */
+function launchRocket(x){
+    let rocket=document.createElement("div");
+    rocket.className="rocket";
+    rocket.style.left=x+"px";
+    rocket.style.bottom="0px";
+    document.body.appendChild(rocket);
+
+    let height=Math.random()*window.innerHeight*0.5+150;
+    let pos=0;
+
+    let fly=setInterval(()=>{
+        pos+=8;
+        rocket.style.bottom=pos+"px";
+        if(pos>=height){
+            clearInterval(fly);
+            rocket.remove();
+            explodeHeart(x,window.innerHeight-height);
+        }
+    },16);
+}
+
+function explodeHeart(x,y){
+    const particles=120;
+    const scale=10;
+    for(let i=0;i<particles;i++){
+        const t=(i/particles)*Math.PI*2;
+        const heartX=16*Math.pow(Math.sin(t),3);
+        const heartY=13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t);
+        let fw=document.createElement("div");
         fw.className="firework";
-        fw.innerHTML="❤️";
-        fw.style.left=Math.random()*window.innerWidth+"px";
-        fw.style.top=Math.random()*window.innerHeight+"px";
+        fw.style.left=x+"px";
+        fw.style.top=y+"px";
+        fw.style.color=i%2===0?"gold":"#ff0044";
+        fw.style.background="currentColor";
+        fw.style.setProperty("--x",heartX*scale+"px");
+        fw.style.setProperty("--y",-heartY*scale+"px");
         document.body.appendChild(fw);
-        setTimeout(()=>fw.remove(),1000);
+        setTimeout(()=>fw.remove(),1200);
     }
 }
 
-function showCountdown(){
-    setInterval(()=>{
-        const now=new Date();
-        const tomorrow=new Date();
-        tomorrow.setHours(24,0,0,0);
-        const diff=tomorrow-now;
+setInterval(()=>{ if(started) launchRocket(Math.random()*window.innerWidth); },3000);
+document.addEventListener("click",(e)=>{ if(started) launchRocket(e.clientX); });
 
-        const h=Math.floor(diff/1000/60/60);
-        const m=Math.floor(diff/1000/60%60);
-        const s=Math.floor(diff/1000%60);
-
-        document.getElementById("countdown").innerText=
-        "⏳ Reset sau: "+h+"h "+m+"m "+s+"s";
-    },1000);
+/* TẠO 25 BAO */
+const container=document.getElementById("container");
+for(let i=0;i<25;i++){
+    let w=document.createElement("div");
+    w.className="lixi";
+    w.innerHTML=`
+        <div class="card">
+            <div class="front"></div>
+            <div class="flap"></div>
+            <div class="back"></div>
+        </div>`;
+    w.onclick=()=>openCard(w);
+    container.appendChild(w);
 }
 
-showCountdown();
-</script>
+function openCard(wrapper){
+    if(wrapper.classList.contains("open")) return;
 
+    if(localStorage.getItem("openedDate")===getToday()){
+        showPassword();
+        return;
+    }
+
+    let back=wrapper.querySelector(".back");
+    let random=Math.random()*100;
+    let reward="";
+
+    if(random<50){
+        let amount=Math.floor(Math.random()*48+2)*2000;
+        reward="💰 "+amount.toLocaleString("vi-VN")+" VNĐ";
+    }else{
+        reward="🎉 Chúc "+playerName+" năm mới may mắn!";
+    }
+
+    back.innerText=reward;
+    wrapper.classList.add("open");
+    localStorage.setItem("openedDate",getToday());
+
+    playMusic();
+    sendToSheet(playerName,reward);
+
+    setTimeout(()=>{
+        alert("🎉 "+playerName+" nhận được:\n"+reward);
+    },800);
+}
+
+function showPassword(){
+    let overlay=document.createElement("div");
+    overlay.className="overlay";
+    overlay.innerHTML=`
+        <h2>🔒 Nhập mật khẩu mở lại</h2>
+        <input type="password" id="passInput">
+        <button onclick="checkPass()">Xác nhận</button>
+    `;
+    document.body.appendChild(overlay);
+
+    window.checkPass=function(){
+        if(document.getElementById("passInput").value==="LAMGICOLANHAI"){
+            localStorage.removeItem("openedDate");
+            overlay.remove();
+            alert("Mật khẩu đúng! Mở lại được.");
+        }else{
+            alert("Sai mật khẩu!");
+        }
+    }
+}
+
+</script>
 </body>
 </html>
