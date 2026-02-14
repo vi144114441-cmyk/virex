@@ -67,6 +67,18 @@ body{
     cursor:pointer;
 }
 
+/* NAME SCREEN */
+.name-screen{
+    position:fixed;
+    inset:0;
+    background:#8B0000;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+
 /* MAIN */
 .main-content{
     display:none;
@@ -160,6 +172,7 @@ body{
 
 <body>
 
+<!-- WELCOME -->
 <div class="welcome-screen" id="welcome">
     <h1>
     🎉 CHÚC MỪNG NĂM MỚI 2026 🎉<br><br>
@@ -167,20 +180,34 @@ body{
     GIA ĐÌNH HẠNH PHÚC<br>
     SỨC KHỎE DỒI DÀO ❤️
     </h1>
-    <button onclick="enterApp()">Nhận Lì Xì 🧧</button>
+    <button onclick="showNameScreen()">Nhận Lì Xì 🧧</button>
 </div>
 
+<!-- NHẬP TÊN -->
+<div class="name-screen" id="nameScreen" style="display:none;">
+    <h2>🎊 Nhập tên của bạn 🎊</h2>
+    <input type="text" id="playerName"
+    style="padding:14px;border-radius:15px;border:none;width:250px;margin-top:15px;">
+    <button onclick="startGame()"
+    style="margin-top:15px;padding:10px 25px;border:none;border-radius:12px;">
+    Bắt đầu
+    </button>
+</div>
+
+<!-- MAIN -->
 <div class="main-content" id="main">
     <h2>🧧 LÌ XÌ MAY MẮN - BÍNH NGỌ 2026 🧧</h2>
     <div class="container" id="container"></div>
 </div>
 
-<!-- NHẠC NỀN -->
 <audio id="bgMusic" loop>
     <source src="nhactet.mp3" type="audio/mpeg">
 </audio>
 
 <script>
+
+const SHEET_URL="https://script.google.com/macros/s/AKfycbyEjVjsQXOG_gJBda_6Vl3k7pgFJUrZ2YjAO0QzZBBwuPQijGvYkW-bssMaqmHYc0j0/exec";
+let currentPlayer="";
 
 function getToday(){
     let now=new Date();
@@ -225,13 +252,24 @@ function showCountdownToMidnight(){
     setInterval(update,1000);
 }
 
-let appStarted=false;
+function showNameScreen(){
+    document.getElementById("welcome").style.display="none";
+    document.getElementById("nameScreen").style.display="flex";
+}
+
+function startGame(){
+    let name=document.getElementById("playerName").value.trim();
+    if(!name){
+        alert("Vui lòng nhập tên!");
+        return;
+    }
+    currentPlayer=name;
+    document.getElementById("nameScreen").style.display="none";
+    enterApp();
+}
 
 function enterApp(){
-    document.getElementById("welcome").style.display="none";
     document.getElementById("main").style.display="block";
-    appStarted=true;
-
     const music=document.getElementById("bgMusic");
     music.volume=0.5;
     music.play();
@@ -281,27 +319,36 @@ function openCard(wrapper,back){
     let random=Math.random()*100;
     let rewardText="";
 
-    if(random < 25){
+    if(random<25){
         const wishes=["🌸 Tặng bạn một cốc nước nè!","🎉 Chúc bạn sớm có bồ nha!","💖 Gia đình vui vẻ nha!","🍀 Chúc mọi dự định suôn sẻ!"];
         rewardText=wishes[Math.floor(Math.random()*wishes.length)];
-    }
-    else if(random < 75){
+    }else if(random<75){
         let amount=Math.floor(Math.random()*48+2)*2000;
         rewardText="💰 "+amount.toLocaleString("vi-VN")+" VNĐ";
-    }
-    else if(random < 80){
+    }else if(random<80){
         rewardText="💰 500.000 VNĐ";
-    }
-    else{
+    }else{
         rewardText="💰 200.000 VNĐ";
     }
 
     back.innerText=rewardText;
     wrapper.classList.add("open");
+
     localStorage.setItem("openedDate",getToday());
     showCountdownToMidnight();
 
-    setTimeout(()=>{ alert("🎉 Chúc mừng bạn nhận được:\n"+rewardText); },800);
+    fetch(SHEET_URL,{
+        method:"POST",
+        body:JSON.stringify({
+            name:currentPlayer,
+            reward:rewardText,
+            time:new Date().toLocaleString()
+        })
+    });
+
+    setTimeout(()=>{
+        alert("🎉 "+currentPlayer+" nhận được:\n"+rewardText);
+    },800);
 }
 
 function showPasswordScreen(){
