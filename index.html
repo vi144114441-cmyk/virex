@@ -92,7 +92,6 @@ body{
     width:100%;height:100%;
     border-radius:18px;
     background:#b71c1c;
-    box-shadow:0 10px 25px rgba(0,0,0,0.4);
 }
 .flap{
     position:absolute;
@@ -172,10 +171,15 @@ const WEBAPP_URL="https://script.google.com/macros/s/AKfycbz58kCVNFXfj-8sDwM2qaN
 let playerName="";
 let started=false;
 
+/* GỬI GOOGLE SHEETS */
 function sendToSheet(name,reward){
     fetch(WEBAPP_URL,{
         method:"POST",
-        body:JSON.stringify({name:name,reward:reward})
+        body:JSON.stringify({
+            name:name,
+            reward:reward,
+            time:new Date().toLocaleString()
+        })
     });
 }
 
@@ -184,13 +188,16 @@ function getToday(){
     return now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,'0')+"-"+String(now.getDate()).padStart(2,'0');
 }
 
+/* VÀO APP */
 function enterApp(){
     let name=document.getElementById("playerNameStart").value.trim();
     if(!name){ alert("Vui lòng nhập tên!"); return; }
+
     playerName=name;
     document.getElementById("welcome").style.display="none";
     document.getElementById("main").style.display="block";
     started=true;
+    updateCountdown();
 }
 
 /* NHẠC */
@@ -205,6 +212,11 @@ function updateCountdown(){
     tomorrow.setHours(24,0,0,0);
     const diff=tomorrow-now;
 
+    if(diff<=0){
+        localStorage.removeItem("openedDate");
+        location.reload();
+    }
+
     const h=Math.floor(diff/1000/60/60);
     const m=Math.floor(diff/1000/60%60);
     const s=Math.floor(diff/1000%60);
@@ -213,7 +225,6 @@ function updateCountdown(){
     "⏳ Reset sau: "+h+"h "+m+"m "+s+"s";
 }
 setInterval(updateCountdown,1000);
-updateCountdown();
 
 /* PHÁO HOA */
 function launchRocket(x){
@@ -291,7 +302,7 @@ function openCard(wrapper){
         let amount=Math.floor(Math.random()*48+2)*2000;
         reward="💰 "+amount.toLocaleString("vi-VN")+" VNĐ";
     }else{
-        reward="🎉 Chúc "+playerName+" năm mới may mắn!";
+        reward="🎉 Chúc "+playerName+" năm mới phát tài!";
     }
 
     back.innerText=reward;
@@ -320,13 +331,12 @@ function showPassword(){
         if(document.getElementById("passInput").value==="LAMGICOLANHAI"){
             localStorage.removeItem("openedDate");
             overlay.remove();
-            alert("Mật khẩu đúng! Mở lại được.");
+            alert("Mở lại thành công!");
         }else{
             alert("Sai mật khẩu!");
         }
     }
 }
-
 </script>
 </body>
 </html>
