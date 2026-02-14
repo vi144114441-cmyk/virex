@@ -15,10 +15,9 @@ body{
     color:white;
     overflow-x:hidden;
     background: linear-gradient(135deg, #8B0000, #ff0000, #b71c1c);
-    background-size: cover;
 }
 
-/* ===== PHÁO HOA ===== */
+/* PHÁO HOA */
 .rocket{
     position:fixed;
     width:4px;
@@ -44,7 +43,7 @@ body{
     to{ transform:translate(var(--x), var(--y)); opacity:0; }
 }
 
-/* ===== WELCOME ===== */
+/* WELCOME */
 .welcome-screen{
     position:fixed;
     inset:0;
@@ -68,7 +67,7 @@ body{
     cursor:pointer;
 }
 
-/* ===== MAIN ===== */
+/* MAIN */
 .main-content{
     display:none;
     padding:30px 15px;
@@ -84,7 +83,7 @@ body{
     grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
 }
 
-/* ===== LÌ XÌ 3D ===== */
+/* LÌ XÌ */
 .lixi{
     display:flex;
     justify-content:center;
@@ -105,13 +104,6 @@ body{
     width:100%;
     height:100%;
     border-radius:18px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:gold;
-    font-weight:bold;
-    text-align:center;
-    padding:10px;
     box-shadow:0 10px 25px rgba(0,0,0,0.4);
 }
 
@@ -163,24 +155,6 @@ body{
     z-index:9999;
     padding:20px;
 }
-
-.password-screen input{
-    padding:14px;
-    font-size:18px;
-    border-radius:15px;
-    border:none;
-    width:90%;
-    max-width:300px;
-    text-align:center;
-}
-
-.password-screen button{
-    margin-top:15px;
-    padding:12px 28px;
-    border-radius:15px;
-    border:none;
-    font-size:16px;
-}
 </style>
 </head>
 
@@ -201,17 +175,19 @@ body{
     <div class="container" id="container"></div>
 </div>
 
+<!-- NHẠC NỀN -->
+<audio id="bgMusic" loop>
+    <source src="nhactet.mp3" type="audio/mpeg">
+</audio>
+
 <script>
 
-/* ===== LẤY NGÀY HÔM NAY ===== */
 function getToday(){
     let now=new Date();
     return now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,'0')+"-"+String(now.getDate()).padStart(2,'0');
 }
 
-/* ===== RESET 00:00 ===== */
 function showCountdownToMidnight(){
-
     if(document.getElementById("countdownBox")) return;
 
     let box=document.createElement("div");
@@ -249,68 +225,24 @@ function showCountdownToMidnight(){
     setInterval(update,1000);
 }
 
-/* ===== PHÁO HOA + APP ===== */
 let appStarted=false;
-
-function launchRocket(x){
-    let rocket=document.createElement("div");
-    rocket.className="rocket";
-    rocket.style.left=x+"px";
-    rocket.style.bottom="0px";
-    document.body.appendChild(rocket);
-
-    let height=Math.random()*window.innerHeight*0.5+150;
-    let pos=0;
-
-    let fly=setInterval(()=>{
-        pos+=8;
-        rocket.style.bottom=pos+"px";
-        if(pos>=height){
-            clearInterval(fly);
-            rocket.remove();
-            explodeHeart(x,window.innerHeight-height);
-        }
-    },16);
-}
-
-function explodeHeart(x,y){
-    const particles=120;
-    const scale=10;
-
-    for(let i=0;i<particles;i++){
-        const t=(i/particles)*Math.PI*2;
-        const heartX=16*Math.pow(Math.sin(t),3);
-        const heartY=13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t);
-
-        let fw=document.createElement("div");
-        fw.className="firework";
-        fw.style.left=x+"px";
-        fw.style.top=y+"px";
-        fw.style.color=i%2===0?"gold":"#ff0044";
-        fw.style.background="currentColor";
-        fw.style.setProperty("--x",heartX*scale+"px");
-        fw.style.setProperty("--y",-heartY*scale+"px");
-        document.body.appendChild(fw);
-        setTimeout(()=>fw.remove(),1200);
-    }
-}
-
-setInterval(()=>{ if(appStarted) launchRocket(Math.random()*window.innerWidth); },3000);
-document.addEventListener("click",(e)=>{ if(appStarted) launchRocket(e.clientX); });
 
 function enterApp(){
     document.getElementById("welcome").style.display="none";
     document.getElementById("main").style.display="block";
     appStarted=true;
 
+    const music=document.getElementById("bgMusic");
+    music.volume=0.5;
+    music.play();
+
     if(localStorage.getItem("openedDate")===getToday()){
         showCountdownToMidnight();
     }
 }
 
-/* ===== TẠO 25 BAO ===== */
-
 const container=document.getElementById("container");
+const images=["lixi1.jpg","lixi2.jpg","lixi3.jpg","lixi4.jpg","lixi5.jpg"];
 
 for(let i=0;i<25;i++){
     let wrapper=document.createElement("div");
@@ -321,8 +253,6 @@ for(let i=0;i<25;i++){
 
     let front=document.createElement("div");
     front.className="front";
-
-    const images=["lixi1.jpg","lixi2.jpg","lixi3.jpg","lixi4.jpg","lixi5.jpg","lixi6.jpg","lixi7.jpg","lixi8.jpg","lixi9.jpg","lixi10.jpg","lixi11.jpg","lixi12.jpg","lixi13.jpg","lixi14.jpg"];
     front.style.background=`url(${images[i%images.length]}) center/cover no-repeat`;
 
     let flap=document.createElement("div");
@@ -339,7 +269,6 @@ for(let i=0;i<25;i++){
     container.appendChild(wrapper);
 }
 
-/* ===== RANDOM THƯỞNG ===== */
 function openCard(wrapper,back){
 
     if(wrapper.classList.contains("open")) return;
@@ -353,16 +282,19 @@ function openCard(wrapper,back){
     let rewardText="";
 
     if(random < 25){
-        const wishes=["🌸 Tặng bạn một cốc nước nè!","🎉 Chúc bạn sớm có bồ nha!","💖 Gia đình vui vẻ nha!","🍀 Chúc mọi dự định suôn sẻ!","🌟 Công việc thành công nha!"];
+        const wishes=["🌸 Tặng bạn một cốc nước nè!","🎉 Chúc bạn sớm có bồ nha!","💖 Gia đình vui vẻ nha!","🍀 Chúc mọi dự định suôn sẻ!"];
         rewardText=wishes[Math.floor(Math.random()*wishes.length)];
     }
     else if(random < 75){
         let amount=Math.floor(Math.random()*48+2)*2000;
         rewardText="💰 "+amount.toLocaleString("vi-VN")+" VNĐ";
     }
-    else if(random < 80){ rewardText="💰 500.000 VNĐ"; }
-    else if(random < 90){ rewardText="🔋 Sạc Dự Phòng"; }
-    else{ rewardText="💰 200.000 VNĐ"; }
+    else if(random < 80){
+        rewardText="💰 500.000 VNĐ";
+    }
+    else{
+        rewardText="💰 200.000 VNĐ";
+    }
 
     back.innerText=rewardText;
     wrapper.classList.add("open");
@@ -372,14 +304,13 @@ function openCard(wrapper,back){
     setTimeout(()=>{ alert("🎉 Chúc mừng bạn nhận được:\n"+rewardText); },800);
 }
 
-/* ===== PASSWORD ===== */
 function showPasswordScreen(){
     let overlay=document.createElement("div");
     overlay.className="password-screen";
     overlay.innerHTML=`
         <h2>🔒 Nhập mật khẩu để mở lại</h2>
-        <input type="password" id="passInput">
-        <button onclick="checkPass()">Xác nhận</button>
+        <input type="password" id="passInput" style="padding:14px;border-radius:15px;border:none;">
+        <button onclick="checkPass()" style="margin-top:15px;padding:10px 25px;border:none;border-radius:12px;">Xác nhận</button>
     `;
     document.body.appendChild(overlay);
 
@@ -394,7 +325,6 @@ function showPasswordScreen(){
         }
     }
 }
-
 </script>
 </body>
 </html>
