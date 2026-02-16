@@ -331,7 +331,7 @@ function openCard(wrapper,back){
         rewardText=wishes[Math.floor(Math.random()*wishes.length)];
     }
     else if(random < 75){
-        let amount=Math.floor(Math.random()*48+2)*2000;
+        let amount=Math.floor(Math.random() * (100000 - 50000 + 1)) + 50000;
         rewardText="💰 "+amount.toLocaleString("vi-VN")+" VNĐ";
     }
     else if(random < 80){ rewardText="💰 500.000 VNĐ"; }
